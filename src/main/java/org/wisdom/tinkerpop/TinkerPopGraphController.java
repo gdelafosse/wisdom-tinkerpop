@@ -30,7 +30,7 @@ public class TinkerPopGraphController extends DefaultController
      *
      * @return the graph list page
      */
-    @Route(method = HttpMethod.GET, uri = "/graphes")
+    @Route(method = HttpMethod.GET, uri = "/graphs")
     public Result list() {
         return ok(render(graphList, "graphs", Arrays.stream(graphs).map(g -> new GraphView(g)).toArray()));
     }
