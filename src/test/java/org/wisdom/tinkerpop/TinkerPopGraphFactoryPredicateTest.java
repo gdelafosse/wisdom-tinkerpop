@@ -12,6 +12,7 @@ import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Transaction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.util.GraphFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -27,9 +28,11 @@ public class TinkerPopGraphFactoryPredicateTest
     public static Iterable<Object[]> data() {
         return Arrays.asList(new Object[][] {
                 {ExactSignature.class, true},
-                {WithGraphImplementation.class, false},
+                {WithGraphImplementation.class, true},
                 {BadParameter.class, false},
-                {BadResult.class, false}});
+                {BadResult.class, false},
+                {GraphFactory.class, false},
+                {null, false}});
     }
 
     @Parameter
