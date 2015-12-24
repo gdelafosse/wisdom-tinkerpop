@@ -42,6 +42,8 @@ class TinkerPopBundleTracker implements TinkerPopGraphFinder, BundleTrackerCusto
 
     private Multimap<Bundle, Class<?>> graphClassesPerBundle = LinkedListMultimap.create();
 
+    private final TinkerPopGraphFactoryPredicate predicate = new TinkerPopGraphFactoryPredicate();
+
     public TinkerPopBundleTracker(BundleContext bundleContext)
     {
         this.bundleContext = bundleContext;
@@ -101,10 +103,10 @@ class TinkerPopBundleTracker implements TinkerPopGraphFinder, BundleTrackerCusto
             lock.lock();
 
             LOGGER.debug("Adding bundle {}", bundle.getSymbolicName());
-            Set<Class<?>> classes = BundleScanner.bundle(bundle).scan();
+            Set<Class<?>> classes = BundleScanner.bundle(bundle).scan(predicate);
             if (!classes.isEmpty())
             {
-                classes.stream().forEach(c -> bundlesPerClasses.put(c, bundle));
+                classes.stream().forEach(c -> {bundlesPerClasses.put(c, bundle); LOGGER.info("{} from {} is a GraphFactory.", c.getName(), bundle.getSymbolicName());});
                 graphClassesPerBundle.putAll(bundle, classes);
                 LOGGER.debug("{} GraphFactory found in bundle {}", classes.size(), bundle.getSymbolicName());
 
