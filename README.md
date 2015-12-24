@@ -2,6 +2,9 @@
 
 This project is an extension for Wisdom Framework, to allow the integration of TinkerPop framework.
 
+> It works only if the pull request https://github.com/apache/incubator-tinkerpop/pull/186 is accepted
+> Waiting for it, you can checkout and compile https://github.com/gdelafosse/incubator-tinkerpop/tree/osgify.
+
 ## Installation
 
 Add the following dependency to your `pom.xml` file:
