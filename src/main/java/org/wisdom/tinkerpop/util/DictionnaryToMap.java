@@ -10,7 +10,9 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Created by gdelafosse on 23/12/15.
+ * An adapter that turns a Dictionary into a Map
+ * @param <K>
+ * @param <V>
  */
 public class DictionnaryToMap<K, V> implements Map<K, V>
 {

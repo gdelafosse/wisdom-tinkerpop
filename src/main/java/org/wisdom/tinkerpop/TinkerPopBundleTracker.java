@@ -28,9 +28,9 @@ import com.google.common.collect.Multimap;
 @Component
 @Provides(specifications = TinkerPopGraphFinder.class)
 @Instantiate
-class IPojoTinkerPopBundleTracker implements TinkerPopGraphFinder, BundleTrackerCustomizer<Set<Class<?>>>
+class TinkerPopBundleTracker implements TinkerPopGraphFinder, BundleTrackerCustomizer<Set<Class<?>>>
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(IPojoTinkerPopBundleTracker.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TinkerPopBundleTracker.class);
 
     private final BundleContext bundleContext;
 
@@ -42,7 +42,7 @@ class IPojoTinkerPopBundleTracker implements TinkerPopGraphFinder, BundleTracker
 
     private Multimap<Bundle, Class<?>> graphClassesPerBundle = LinkedListMultimap.create();
 
-    public IPojoTinkerPopBundleTracker(BundleContext bundleContext)
+    public TinkerPopBundleTracker(BundleContext bundleContext)
     {
         this.bundleContext = bundleContext;
     }
@@ -50,10 +50,10 @@ class IPojoTinkerPopBundleTracker implements TinkerPopGraphFinder, BundleTracker
     @Validate
     public void validate()
     {
-        LOGGER.debug("Validating IPojoTinkerPopBundleTracker");
+        LOGGER.debug("Validating TinkerPopBundleTracker");
         bundleTracker = new BundleTracker<>(bundleContext, Bundle.ACTIVE, this);
         bundleTracker.open();
-        LOGGER.debug("IPojoTinkerPopBundleTracker invalidated");
+        LOGGER.debug("TinkerPopBundleTracker invalidated");
 
     }
 
@@ -64,7 +64,7 @@ class IPojoTinkerPopBundleTracker implements TinkerPopGraphFinder, BundleTracker
         {
             lock.lock();
 
-            LOGGER.debug("Invalidating IPojoTinkerPopBundleTracker");
+            LOGGER.debug("Invalidating TinkerPopBundleTracker");
             bundlesPerClasses.clear();
             graphClassesPerBundle.clear();
 
@@ -72,7 +72,7 @@ class IPojoTinkerPopBundleTracker implements TinkerPopGraphFinder, BundleTracker
             {
                 bundleTracker.close();
             }
-            LOGGER.debug("IPojoTinkerPopBundleTracker invalidate");
+            LOGGER.debug("TinkerPopBundleTracker invalidate");
         }
         finally
         {
