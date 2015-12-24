@@ -39,7 +39,7 @@ class IPojoGraphFactory implements TinkerPopGraphFactory
         Class<?> graphClass = scanner.findGraphFactory(graphClassName);
         if (graphClass == null)
         {
-            String message = String.format("GraphFactory could not findGraphFactory [%s] - Ensure that the provider bundle is installed.", graphClassName);
+            String message = String.format("GraphFactory could not findGraphFactory [{}] - Ensure that the provider bundle is installed.", graphClassName);
             LOGGER.error(message);
             throw new TinkerPopGraphException(message);
         }

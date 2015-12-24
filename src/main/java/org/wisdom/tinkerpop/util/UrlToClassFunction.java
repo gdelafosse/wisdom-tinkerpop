@@ -34,7 +34,7 @@ public class UrlToClassFunction implements Function<URL, Class<?>>
         }
         catch (ClassNotFoundException | IllegalStateException | NoClassDefFoundError e)
         {
-            LOGGER.warn("Unable to load class {} from bundle {}", url.getFile(), bundle.getSymbolicName());
+            LOGGER.debug("Unable to load class {} from bundle {}", url.getFile(), bundle.getSymbolicName());
             LOGGER.debug(e.getMessage(), e);
             return null;
         }
