@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head lang="en">
+    <title th:text="'Wisdom TinkerPop Graph ' + ${graph.name)}">Wisdom TinkerPop Graph</title>
+    <link rel="shortcut icon" href="/assets/owl-small.png"/>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="stylesheet" href="/libs/css/bootstrap.css" media="screen"/>
+    <link rel="stylesheet" href="/assets/main.css"/>
+
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <ul class="nav nav-pills pull-right">
+            <li><a href="http://wisdom-framework.org">Wisdom TinkerPop</a></li>
+        </ul>
+    </div>
+
+    <!--/*@thymesVar id="#arrays" type="java"*/-->
+    <h1 th:text="'Wisdom TinkerPop Graph ' + ${graph.name)}">Wisdom TinkerPop Graph</h1>
+
+    <table class="table">
+        <tr>
+            <th>NAME</th>
+            <th>VERTICES</th>
+            <th>EDGES</th>
+            <th>DETAILS</th>
+        </tr>
+        <tr>
+            <td th:text="${graph.name}">0</td>
+            <td th:text="${graph.vertexCount}">0</td>
+            <td th:text="${graph.edgeCount}">0</td>
+            <td th:text="${graph.name}">0</td>
+        </tr>
+    </table>
+
+</div>
+
+<!-- Scripts -->
+<script src="/libs/jquery.min.js"></script>
+<script src="/libs/js/bootstrap.min.js"></script>
+
+</body>
+</html>
