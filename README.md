@@ -74,4 +74,18 @@ As the bundle can be deployed and removed dynamically, and as the classloading s
 - when the configuration is removed, the graph is closed and the related service is unregistered.
 - when a bundle that contains the TinkerPop graph factory implementation is stopped removed, any registered Graph is closed and unregistered.
 
+## Selectionning a graph instance
 
+Any property added in the graph configuration is added as a service property. So you can filter the required Graph you need this way :
+````
+@Requires(filter ="(my.prop=my.value)")
+private Graph graph;
+````
+
+To standardize the way to get a Graph, wisdom-tinkerpop proposes to set the property _wisdom.tinkerpop.graphid_ (WisdomTinkerPopConstans.GRAPH_ID) to select a Graph instance.
+If it's not set, wisdom-tinkerpop sets this property to the corresponding OSGI service pid and also in the graph configuration.
+As a result, you will select a graph this way :
+````
+@Requires(filter ="(wisdom.tinkerpop.graphId=mygraph)")
+private Graph graph;
+````
