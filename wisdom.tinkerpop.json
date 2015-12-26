@@ -1,0 +1,21 @@
+{
+  "name": "wisdom-tinkerpop",
+  "version":"1.0.0-SNAPSHOT",
+  "description": "The Wisdom Tinkerpop extension integrates the Tinkerpop graph database framework into the Wisdom Framework.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gdelafosse/wisdom-tinkerpop"
+  },
+
+  "author": "Guillaume Delafosse",
+  "license": {
+    "type": "Apache",
+    "url": "https://github.com/gdelafosse/wisdom-tinkerpop/LICENSE"
+  },
+  "homepage": "https://github.com/gdelafosse/wisdom-tinkerpop",
+  "keywords": [
+    "tinkerpop",
+    "gremlin",
+    "graph"
+  ]
+}
