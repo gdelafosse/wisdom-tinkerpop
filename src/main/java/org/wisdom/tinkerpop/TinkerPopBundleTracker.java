@@ -13,6 +13,7 @@ import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Validate;
+import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -103,20 +104,13 @@ class TinkerPopBundleTracker implements TinkerPopGraphFinder, BundleTrackerCusto
             lock.lock();
 
             LOGGER.debug("Adding bundle {}", bundle.getSymbolicName());
-            Set<Class<?>> classes = BundleScanner.bundle(bundle).scan(predicate);
-            if (!classes.isEmpty())
-            {
-                classes.stream().forEach(c -> {bundlesPerClasses.put(c, bundle); LOGGER.info("{} from {} is a GraphFactory.", c.getName(), bundle.getSymbolicName());});
-                graphClassesPerBundle.putAll(bundle, classes);
-                LOGGER.debug("{} GraphFactory found in bundle {}", classes.size(), bundle.getSymbolicName());
 
-                return classes;
-            }
-            else
+            Set<Class<?>> classes = Collections.emptySet();
+            if (isBundleWiredToTinkerPop(bundle))
             {
-                LOGGER.debug("No GraphFactory found in bundle {}", bundle.getSymbolicName());
-                return Collections.emptySet();
+                return findGraphFactoriesInBundle(bundle);
             }
+            return classes;
         }
         finally
         {
@@ -143,6 +137,39 @@ class TinkerPopBundleTracker implements TinkerPopGraphFinder, BundleTrackerCusto
         finally
         {
             lock.unlock();
+        }
+    }
+
+    private Set<Class<?>> findGraphFactoriesInBundle(Bundle bundle)
+    {
+        Set<Class<?>> classes = BundleScanner.bundle(bundle).scan(predicate);
+        if (!classes.isEmpty())
+        {
+            classes.stream().forEach(c -> {
+                bundlesPerClasses.put(c, bundle);
+                LOGGER.info("{} from {} is a GraphFactory.", c.getName(), bundle.getSymbolicName());
+            });
+            graphClassesPerBundle.putAll(bundle, classes);
+            LOGGER.debug("{} GraphFactory found in bundle {}", classes.size(), bundle.getSymbolicName());
+
+        }
+        else
+        {
+            LOGGER.debug("No GraphFactory found in bundle {}", bundle.getSymbolicName());
+        }
+        return Collections.emptySet();
+    }
+
+    private boolean isBundleWiredToTinkerPop(final Bundle bundle)
+    {
+        try
+        {
+            bundle.loadClass(Graph.class.getName());
+            return true;
+        }
+        catch (ClassNotFoundException | IllegalStateException | NoClassDefFoundError e)
+        {
+            return false;
         }
     }
 }
