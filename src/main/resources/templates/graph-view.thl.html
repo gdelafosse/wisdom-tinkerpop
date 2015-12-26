@@ -36,6 +36,13 @@
         </tr>
     </table>
 
+    <h3>Configuration</h3>
+    <table class="table">
+        <tr th:each="conf : ${graph.configuration}">
+            <td th:text="${conf.key}"></td>
+            <td th:text="${conf.value}">0</td>
+        </tr>
+    </table>
 </div>
 
 <!-- Scripts -->

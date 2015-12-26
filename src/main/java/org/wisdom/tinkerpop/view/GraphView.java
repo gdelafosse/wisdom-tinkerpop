@@ -1,5 +1,8 @@
 package org.wisdom.tinkerpop.view;
 
+import java.util.Map;
+
+import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
 import org.wisdom.tinkerpop.WisdomTinkerPopConstants;
@@ -31,4 +34,8 @@ class GraphView
         return IteratorUtils.count(graph.vertices());
     }
 
+    public Map<Object, Object> getConfiguration()
+    {
+        return ConfigurationConverter.getMap(graph.configuration());
+    }
 }
