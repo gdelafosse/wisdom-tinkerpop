@@ -2,7 +2,7 @@ package org.wisdom.tinkerpop.template;
 
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
-import org.wisdom.tinkerpop.TinkerPopGraphFactory;
+import org.wisdom.tinkerpop.TinkerPopGraphManagedServiceFactory;
 
 /**
  * A view of the Graph
@@ -18,7 +18,7 @@ public class GraphView
 
     public String getName()
     {
-        return this.graph.configuration().getString(TinkerPopGraphFactory.GRAPH_NAME);
+        return this.graph.configuration().getString(TinkerPopGraphManagedServiceFactory.GRAPH);
     }
 
     public long getEdgeCount()

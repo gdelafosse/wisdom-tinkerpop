@@ -1,22 +1,23 @@
 package org.wisdom.tinkerpop;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;
-import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.cm.ManagedServiceFactory;
 import org.osgi.util.tracker.BundleTracker;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
 import org.slf4j.Logger;
@@ -27,9 +28,8 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 
 @Component
-@Provides(specifications = TinkerPopGraphFinder.class)
 @Instantiate
-class TinkerPopBundleTracker implements TinkerPopGraphFinder, BundleTrackerCustomizer<Set<Class<?>>>
+class TinkerPopBundleTracker implements BundleTrackerCustomizer<Set<Class<?>>>
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(TinkerPopBundleTracker.class);
 
@@ -39,9 +39,7 @@ class TinkerPopBundleTracker implements TinkerPopGraphFinder, BundleTrackerCusto
 
     private Lock lock = new ReentrantLock();
 
-    private Map<Class<?>, Bundle> bundlesPerClasses = new HashMap<>();
-
-    private Multimap<Bundle, Class<?>> graphClassesPerBundle = LinkedListMultimap.create();
+    private Multimap<Bundle, ServiceRegistration<ManagedServiceFactory>> registeredFactories = LinkedListMultimap.create();
 
     private final TinkerPopGraphFactoryPredicate predicate = new TinkerPopGraphFactoryPredicate();
 
@@ -68,27 +66,9 @@ class TinkerPopBundleTracker implements TinkerPopGraphFinder, BundleTrackerCusto
             lock.lock();
 
             LOGGER.debug("Invalidating TinkerPopBundleTracker");
-            bundlesPerClasses.clear();
-            graphClassesPerBundle.clear();
-
-            if (bundleTracker != null)
-            {
-                bundleTracker.close();
-            }
+            unregisterAllFactories();
+            stopTracker();
             LOGGER.debug("TinkerPopBundleTracker invalidate");
-        }
-        finally
-        {
-            lock.unlock();
-        }
-    }
-
-    public Class<?> findGraphFactory(final String graphClassName)
-    {
-        try
-        {
-            lock.lock();
-            return bundlesPerClasses.keySet().stream().filter(c -> StringUtils.equals(graphClassName, c.getName())).findFirst().get();
         }
         finally
         {
@@ -108,7 +88,7 @@ class TinkerPopBundleTracker implements TinkerPopGraphFinder, BundleTrackerCusto
             Set<Class<?>> classes = Collections.emptySet();
             if (isBundleWiredToTinkerPop(bundle))
             {
-                return findGraphFactoriesInBundle(bundle);
+                classes = findAndRegisterGraphFactories(bundle);
             }
             return classes;
         }
@@ -131,8 +111,7 @@ class TinkerPopBundleTracker implements TinkerPopGraphFinder, BundleTrackerCusto
         {
             lock.lock();
             LOGGER.debug("Removing bundle {}", bundle.getSymbolicName());
-            object.stream().forEach(c -> bundlesPerClasses.remove(c));
-            graphClassesPerBundle.removeAll(bundle);
+            unregisterBundleFactories(bundle);
         }
         finally
         {
@@ -140,17 +119,16 @@ class TinkerPopBundleTracker implements TinkerPopGraphFinder, BundleTrackerCusto
         }
     }
 
-    private Set<Class<?>> findGraphFactoriesInBundle(Bundle bundle)
+    private Set<Class<?>> findAndRegisterGraphFactories(Bundle bundle)
     {
         Set<Class<?>> classes = BundleScanner.bundle(bundle).scan(predicate);
+        LOGGER.debug("{} GraphFactory found in bundle {}", classes.size(), bundle.getSymbolicName());
         if (!classes.isEmpty())
         {
             classes.stream().forEach(c -> {
-                bundlesPerClasses.put(c, bundle);
                 LOGGER.info("{} from {} is a GraphFactory.", c.getName(), bundle.getSymbolicName());
+                registerFactory(bundle, c);
             });
-            graphClassesPerBundle.putAll(bundle, classes);
-            LOGGER.debug("{} GraphFactory found in bundle {}", classes.size(), bundle.getSymbolicName());
 
         }
         else
@@ -170,6 +148,41 @@ class TinkerPopBundleTracker implements TinkerPopGraphFinder, BundleTrackerCusto
         catch (ClassNotFoundException | IllegalStateException | NoClassDefFoundError e)
         {
             return false;
+        }
+    }
+
+    private void registerFactory(final Bundle bundle, final Class<?> c)
+    {
+        Dictionary<String, Object> properties = new Hashtable<>();
+        properties.put("service.pid", c.getName());
+        ServiceRegistration<ManagedServiceFactory> registeredFactory = bundleContext.registerService(ManagedServiceFactory.class, new TinkerPopGraphManagedServiceFactory(bundleContext, c), properties);
+        registeredFactories.put(bundle, registeredFactory);
+    }
+
+    private void unregisterBundleFactories(final Bundle bundle)
+    {
+        Collection<ServiceRegistration<ManagedServiceFactory>> factories = registeredFactories.removeAll(bundle);
+        unregisterFactories(factories);
+    }
+
+    private void unregisterFactories(Collection<ServiceRegistration<ManagedServiceFactory>> factories)
+    {
+        factories.stream().forEach(f -> { ((TinkerPopGraphManagedServiceFactory)bundleContext.getService(f.getReference())).close();f.unregister();});
+    }
+
+    private void unregisterAllFactories()
+    {
+        registeredFactories.keys().stream()
+                .map(b -> registeredFactories.get(b))
+                .forEach(fs -> unregisterFactories(fs));
+        registeredFactories.clear();
+    }
+
+    private void stopTracker()
+    {
+        if (bundleTracker != null)
+        {
+            bundleTracker.close();
         }
     }
 }

@@ -22,7 +22,7 @@ public class TinkerPopGraphController extends DefaultController
     @View("graph-list")
     private Template graphList;
 
-    @Requires
+    @Requires(optional = true)
     private Graph[] graphs;
 
     /**
