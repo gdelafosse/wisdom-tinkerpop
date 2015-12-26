@@ -43,6 +43,15 @@
             <td th:text="${conf.value}">0</td>
         </tr>
     </table>
+
+    <h3>Features</h3>
+    <h4>Graph features</h4>
+    <table class="table">
+        <tr th:each="conf : ${graph.graphFeatures}">
+            <td th:text="${conf.key}"></td>
+            <td th:text="${conf.value}">0</td>
+        </tr>
+    </table>
 </div>
 
 <!-- Scripts -->
