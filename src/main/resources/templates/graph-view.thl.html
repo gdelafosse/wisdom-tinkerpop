@@ -52,6 +52,20 @@
             <td th:text="${conf.value}">0</td>
         </tr>
     </table>
+    <h4>Edge features</h4>
+    <table class="table">
+        <tr th:each="conf : ${graph.edgeFeatures}">
+            <td th:text="${conf.key}"></td>
+            <td th:text="${conf.value}">0</td>
+        </tr>
+    </table>
+    <h4>Vertex features</h4>
+    <table class="table">
+        <tr th:each="conf : ${graph.vertexFeatures}">
+            <td th:text="${conf.key}"></td>
+            <td th:text="${conf.value}">0</td>
+        </tr>
+    </table>
 </div>
 
 <!-- Scripts -->
