@@ -11,7 +11,7 @@ import com.google.common.base.Predicate;
 /**
  * Predicate that returns true if a given class can be used as a TinkerPop GraphFactory.
  */
-public class TinkerPopGraphFactoryPredicate implements Predicate<Class<?>>
+class TinkerPopGraphFactoryPredicate implements Predicate<Class<?>>
 {
 
     @Override

@@ -3,7 +3,7 @@ package org.wisdom.tinkerpop;
 /**
  * Exception thrown by wisdom-tinkerpop
  */
-public class TinkerPopGraphException extends Exception
+class TinkerPopGraphException extends Exception
 {
     public TinkerPopGraphException(final String message)
     {

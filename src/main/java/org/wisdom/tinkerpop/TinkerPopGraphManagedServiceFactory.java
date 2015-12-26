@@ -19,12 +19,9 @@ import org.wisdom.tinkerpop.util.DictionnaryToMap;
 /**
  * A ManagedServiceFactory that registers TinkerPop Graph as a service.
  */
-public class TinkerPopGraphManagedServiceFactory implements ManagedServiceFactory
+class TinkerPopGraphManagedServiceFactory implements ManagedServiceFactory
 {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(TinkerPopGraphManagedServiceFactory.class);
-
-    public static final String GRAPH = "graph";
 
     private final BundleContext bundleContext;
 
@@ -72,8 +69,13 @@ public class TinkerPopGraphManagedServiceFactory implements ManagedServiceFactor
     {
         try
         {
+            // if there's no graphId specify, use the pid
+            if (dictionary.get(WisdomTinkerPopConstants.GRAPH_ID) == null)
+            {
+                dictionary.put(WisdomTinkerPopConstants.GRAPH_ID, pid);
+            }
+
             Graph graph = open(new MapConfiguration(new DictionnaryToMap<String, Object>(dictionary)), factoryClass);
-            dictionary.put(GRAPH, pid);
             return bundleContext.registerService(Graph.class, graph, dictionary);
         }
         catch (TinkerPopGraphException e)

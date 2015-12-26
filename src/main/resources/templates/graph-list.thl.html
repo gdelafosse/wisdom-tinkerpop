@@ -31,10 +31,10 @@
             <th>DETAILS</th>
         </tr>
         <tr th:each="graph : ${graphs}">
-            <td th:text="${graph.name}">0</td>
-            <td th:text="${graph.vertexCount}">0</td>
-            <td th:text="${graph.edgeCount}">0</td>
-            <td th:text="${graph.name}">0</td>
+            <td th:text="${graph.name}"></td>
+            <td th:text="${graph.vertexCount}"></td>
+            <td th:text="${graph.edgeCount}"></td>
+            <td><a th:href="'/graph/'+${graph.name}" th:text="${graph.name}"></a></td>
         </tr>
     </table>
 

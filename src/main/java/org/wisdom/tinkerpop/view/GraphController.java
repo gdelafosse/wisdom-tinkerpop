@@ -18,12 +18,13 @@ import org.wisdom.api.annotations.View;
 import org.wisdom.api.http.HttpMethod;
 import org.wisdom.api.http.Result;
 import org.wisdom.api.templates.Template;
+import org.wisdom.tinkerpop.WisdomTinkerPopConstants;
 
 /**
  * A controller that displays graph list and graph details
  */
 @Controller
-public class GraphController extends DefaultController
+class GraphController extends DefaultController
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphController.class);
 
@@ -77,7 +78,7 @@ public class GraphController extends DefaultController
     {
         try
         {
-            Collection<ServiceReference<Graph>> sr = bundleContext.getServiceReferences(Graph.class, "(id=" + id);
+            Collection<ServiceReference<Graph>> sr = bundleContext.getServiceReferences(Graph.class, String.format("(%s=%s)", WisdomTinkerPopConstants.GRAPH_ID, id));
             if (sr.isEmpty())
             {
                 return null;
