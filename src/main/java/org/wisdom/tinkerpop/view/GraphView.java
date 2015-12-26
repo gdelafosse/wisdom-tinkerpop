@@ -1,4 +1,4 @@
-package org.wisdom.tinkerpop.template;
+package org.wisdom.tinkerpop.view;
 
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
