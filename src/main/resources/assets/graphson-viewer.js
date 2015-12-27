@@ -53,14 +53,39 @@
                 })
 
                 particleSystem.eachNode(function(node, pt){
-                    // node: {mass:#, p:{x,y}, name:"", data:{}}
-                    // pt:   {x:#, y:#}  node position in screen coords
+                    // determine the box size and round off the coords if we'll be
+                    // drawing a text label (awful alignment jitter otherwise...)
+                    var label = node.data.name[0].value
+                    var w = ctx.measureText(label||"").width + 6
 
-                    // draw a rectangle centered at pt
-                    var w = 10
-                    ctx.fillStyle = (node.data.alone) ? "orange" : "black"
-                    ctx.fillRect(pt.x-w/2, pt.y-w/2, w,w)
-                })
+                    if (!(label||"").match(/^[ \t]*$/)){
+                        pt.x = Math.floor(pt.x)
+                        pt.y = Math.floor(pt.y)
+                    }else{
+                        label = null
+                    }
+
+                    // clear any edges below the text label
+                    // ctx.fillStyle = 'rgba(255,255,255,.6)'
+                    // ctx.fillRect(pt.x-w/2, pt.y-7, w,14)
+
+
+                    ctx.clearRect(pt.x-w/2, pt.y-7, w,14)
+
+
+
+                    // draw the text
+                    if (label){
+                        ctx.font = "bold 11px Arial"
+                        ctx.textAlign = "center"
+
+                        // if (node.data.region) ctx.fillStyle = palette[node.data.region]
+                        // else ctx.fillStyle = "#888888"
+                        ctx.fillStyle = "#888888"
+
+                        // ctx.fillText(label||"", pt.x, pt.y+4)
+                        ctx.fillText(label||"", pt.x, pt.y+4)
+                    }})
             },
 
             initMouseHandling:function(){
@@ -121,9 +146,9 @@
     $(document).ready(function(){
         var sys = arbor.ParticleSystem(1000, 600, 0.5) // create the system with sensible repulsion/stiffness/friction
         sys.parameters({gravity:true}) // use center-gravity to make the graph settle nicely (ymmv)
-        sys.renderer = Renderer("#viewport") // our newly created renderer will have its .init() method called shortly by sys...
+        sys.renderer = Renderer("#graphSON") // our newly created renderer will have its .init() method called shortly by sys...
 
-        var canvas = $("#viewport").get(0);
+        var canvas = $("#graphSON").get(0);
         var g = JSON.parse(canvas.textContent);
 
         _.each(g.vertices, function (v) {
