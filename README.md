@@ -89,3 +89,42 @@ As a result, you will select a graph this way :
 @Requires(filter ="(wisdom.tinkerpop.graphId=mygraph)")
 private Graph graph;
 ````
+
+## Example
+
+The wisdom-tinkerpop extension comes with a sample that show how simple it makes developing a graph application so simple.
+The example adapts the TinkerPop Modern graph described in the [TinkerPop introduction](http://tinkerpop.apache.org/docs/3.1.0-incubating/#intro).:
+- by creating a cfg file called org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph-modern.cfg, containing :
+````
+wisdom.tinkerpop.graphid=modern;
+````
+- and by implementing an IPojo component that creates the Modern graph edges and vertices :
+````
+@Component
+@Instantiate
+public class ModernGraph
+{
+    @Requires(filter = "(wisdom.tinkerpop.graphid=modern)")
+    private Graph g;
+
+    @Validate
+    public void validate()
+    {
+        final Vertex marko = g.addVertex(T.id, 1, T.label, "person", "name", "marko", "age", 29);
+        final Vertex vadas = g.addVertex(T.id, 2, T.label, "person", "name", "vadas", "age", 27);
+        final Vertex lop = g.addVertex(T.id, 3, T.label, "software", "name", "lop", "lang", "java");
+        final Vertex josh = g.addVertex(T.id, 4, T.label, "person", "name", "josh", "age", 32);
+        final Vertex ripple = g.addVertex(T.id, 5, T.label, "software", "name", "ripple", "lang", "java");
+        final Vertex peter = g.addVertex(T.id, 6, T.label, "person", "name", "peter", "age", 35);
+        marko.addEdge("knows", vadas, T.id, 7, "weight", 0.5d);
+        marko.addEdge("knows", josh, T.id, 8, "weight", 1.0d);
+        marko.addEdge("created", lop, T.id, 9, "weight", 0.4d);
+        josh.addEdge("created", ripple, T.id, 10, "weight", 1.0d);
+        josh.addEdge("created", lop, T.id, 11, "weight", 0.4d);
+        peter.addEdge("created", lop, T.id, 12, "weight", 0.2d);
+    }
+};
+````
+
+Visiting the page http://localhost:9000/graphs/modern, you will see a view a the graph :
+![Wisdom TinkerPop Modern graph view](screenshots/wisdom-tinkerpop-modern.png?raw=true "Wisdom TinkerPop Modern graph view")
