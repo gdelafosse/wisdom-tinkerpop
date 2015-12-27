@@ -50,12 +50,24 @@
                     ctx.moveTo(pt1.x, pt1.y)
                     ctx.lineTo(pt2.x, pt2.y)
                     ctx.stroke()
+
+                    ctx.font = "bold 11px Arial"
+                    ctx.textAlign = "center"
+                    ctx.fillStyle = ctx.strokeStyle
+
+                    textX = pt1.x>pt2.x?pt2.x:pt1.x
+                    textX += Math.abs(pt2.x-pt1.x)/2
+
+                    textY = pt1.y>pt2.y?pt2.y:pt1.y
+                    textY += Math.abs(pt2.y-pt1.y)/2
+
+                    ctx.fillText(edge.label, textX, textY)
                 })
 
                 particleSystem.eachNode(function(node, pt){
                     // determine the box size and round off the coords if we'll be
                     // drawing a text label (awful alignment jitter otherwise...)
-                    var label = node.data.name[0].value
+                    var label = node.label + ':' + node.data.name[0].value
                     var w = ctx.measureText(label||"").width + 6
 
                     if (!(label||"").match(/^[ \t]*$/)){
@@ -81,7 +93,7 @@
 
                         // if (node.data.region) ctx.fillStyle = palette[node.data.region]
                         // else ctx.fillStyle = "#888888"
-                        ctx.fillStyle = "#888888"
+                        ctx.fillStyle = "#000000"
 
                         // ctx.fillText(label||"", pt.x, pt.y+4)
                         ctx.fillText(label||"", pt.x, pt.y+4)
@@ -152,20 +164,23 @@
         var g = JSON.parse(canvas.textContent);
 
         _.each(g.vertices, function (v) {
-            sys.addNode(v.id, v.properties);
+            var node = sys.addNode(v.id, v.properties);
+            node.label = v.label;
         });
 
         _.each(g.vertices, function (v) {
-            _.map(v.inE, function (value, key) {
+            _.mapObject(v.inE, function (value, key) {
                 _.each(value, function (o) {
-                    sys.addEdge(v.id, o.outV, o.properties);
-                });
-            });
-            _.map(v.outE, function (value, key) {
+                    var edge = sys.addEdge(v.id, o.outV, o.properties);
+                    if (edge) edge.label = this.key;
+                }, {value:value, key:key})
+            })
+            _.mapObject(v.outE, function (value, key) {
                 _.each(value, function (i) {
-                    sys.addEdge(i.inV, v.id, i.properties);
-                });
-            });
+                    var edge = sys.addEdge(i.inV, v.id, i.properties);
+                    if (edge) edge.label = this.key;
+                }, {value:value, key:key})
+            })
         });
 
     })
