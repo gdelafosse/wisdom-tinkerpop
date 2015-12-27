@@ -36,6 +36,8 @@
         </tr>
     </table>
 
+    <canvas id="viewport" th:text="${graph.graphSON}"></canvas>
+
     <h3>Configuration</h3>
     <table class="table">
         <tr th:each="conf : ${graph.configuration}">
@@ -71,6 +73,10 @@
 <!-- Scripts -->
 <script src="/libs/jquery.min.js"></script>
 <script src="/libs/js/bootstrap.min.js"></script>
+<script src="/libs/underscore-min.js"></script>
+
+<script src="/assets/arbor.js"></script>
+<script src="/assets/graphson-viewer.js"></script>
 
 </body>
 </html>

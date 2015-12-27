@@ -1,10 +1,13 @@
 package org.wisdom.tinkerpop.view;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.configuration.ConfigurationConverter;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.structure.io.graphson.GraphSONWriter;
 import org.apache.tinkerpop.gremlin.util.iterator.IteratorUtils;
 import org.wisdom.tinkerpop.WisdomTinkerPopConstants;
 
@@ -38,6 +41,20 @@ class GraphView
     public Map<Object, Object> getConfiguration()
     {
         return ConfigurationConverter.getMap(graph.configuration());
+    }
+
+    public String getGraphSON()
+    {
+        try
+        {
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            GraphSONWriter.build().wrapAdjacencyList(true).create().writeGraph(os, graph);
+            return new String(os.toByteArray(), "UTF8");
+        }
+        catch (IOException e)
+        {
+            return e.getMessage();
+        }
     }
 
     public Map<String, Boolean> getGraphFeatures()
